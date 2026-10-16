@@ -1,0 +1,27 @@
+cd ~/Desktop/supercomp
+cat > .gitignore << 'EOF'
+
+# Python 
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Node / frontend 
+node_modules/
+dist/
+
+# Environment variables
+.env
+!.env.example
+
+# Raw Garmin data 
+data/raw/
+
+# Editors / OS 
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+EOF
