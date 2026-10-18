@@ -3,6 +3,8 @@
 import numpy as np
 import pandas as pd
 
+from app.metrics.sampling import sample_durations
+
 # Zone boundaries as a fraction of heart rate reserve (HRR)
 # Below 0.5 = zone 0 (not counted), 0.5–0.6 = Z1, ..., >= 0.9 = Z5
 ZONE_EDGES = [-np.inf, 0.5, 0.6, 0.7, 0.8, 0.9, np.inf]
@@ -58,10 +60,7 @@ def time_in_zones( samples: pd.DataFrame, hr_rest: float, hr_max: float) -> dict
     if samples.empty:
         return {zone: 0.0 for zone in range(1, 6)}
 
-    # Duration each sample "lasts" = time until the next sample
-    duration = samples["timestamp"].diff().shift(-1).dt.total_seconds()
-    # Long gaps are pauses; the last sample has no successor (NaN) -> 0
-    duration = duration.where(duration <= MAX_SAMPLE_GAP_S, 0.0)
+    duration = sample_durations(samples["timestamp"])
 
     zones = assign_zones(samples["heart_rate"], hr_rest, hr_max)
     # observed=False keeps empty zones; NaN zones (missing HR) are dropped
