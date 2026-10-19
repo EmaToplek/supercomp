@@ -11,24 +11,22 @@ from datetime import date, timedelta
 import numpy as np
 import pandas as pd
 
-# Heart rate does not jump to a new level instantly; it approaches it exponentially. ~30 s is a typical time constant for moderate exercise
-HR_TIME_CONSTANT_S = 30
+#  HR lags behind pace: each second it closes 3% of the gap to the target
+HR_STEP = 0.03
 
 # Weekly plan for a normal week (0 = Monday). Missing days are rest days
 NORMAL_WEEK = {1: "easy", 2: "intervals", 4: "easy", 5: "long"}
 
-# Overload week: two extra sessions on top of the normal plan
 OVERLOAD_WEEK = {0: "easy", 1: "easy", 2: "intervals", 3: "easy", 4: "intervals", 5: "long"}
 
-# Returning after the break: two short, easy sessions per week
 RETURN_WEEK = {1: "easy", 5: "easy"}
 
 
 @dataclass
 class SyntheticActivity:
     start: pd.Timestamp
-    kind: str  # easy, intervals, long
-    samples: pd.DataFrame  # columns: timestamp, heart_rate, speed, distance
+    kind: str  
+    samples: pd.DataFrame  # timestamp, heart_rate, speed, distance
 
 
 def phase_for_day(day: int) -> tuple[str, float]:
@@ -68,3 +66,47 @@ def session_segments(kind: str, factor: float) -> list[tuple[int, float]]:
         return [(900, 0.55), *work_and_rest, (600, 0.50)]
     raise ValueError(f"unknown session kind: {kind}")
 
+
+def simulate_session( start: pd.Timestamp, segments: list[tuple[int, float]], hr_rest: float, hr_max: float) -> pd.DataFrame:
+    """Turn a session plan into one row per second."""
+    heart_rates, speeds = [], []
+
+    for duration, intensity in segments:
+        target_hr = hr_rest + intensity * (hr_max - hr_rest)  
+        speed = 0.8 + 3.2 * intensity  
+
+        for _ in range(duration):
+            heart_rates.append(round(target_hr))
+            speeds.append(speed)
+
+    return pd.DataFrame({
+        "timestamp": pd.date_range(start, periods = len(speeds), freq = "s"),
+        "heart_rate": heart_rates,
+        "speed": speeds,
+        "distance": np.cumsum(speeds).round(1),
+    })
+
+
+
+def generate_activities(start_date: date = date(2026, 8, 20), days: int = 60, hr_rest: float = 65, hr_max: float = 195, seed: int = 42) -> list[SyntheticActivity]:
+    """
+    Generate synthetic activities for days.
+
+    The same seed always produces the same data, so tests and demos are reproducible.
+    """
+    activities = []
+
+    for day in range(days):
+        current = start_date + timedelta(days = day)
+        phase, factor = phase_for_day(day)
+        kind = plan_for_phase(phase).get(current.weekday())
+        if kind is None:
+            continue  
+
+        start = pd.Timestamp(current) + pd.Timedelta(hours = 7)  
+       
+        segments = session_segments(kind, factor)
+        samples = simulate_session(start, segments, hr_rest, hr_max)
+        activities.append(SyntheticActivity(start, kind, samples))
+
+    return activities

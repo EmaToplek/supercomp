@@ -1,10 +1,15 @@
 import pytest
+import pandas as pd
+
+from datetime import date
 
 from app.generators.synthetic import (
     NORMAL_WEEK,
     phase_for_day,
     plan_for_phase,
     session_segments,
+    simulate_session,
+    generate_activities
 )
 
 # Training plan and session structure
@@ -56,3 +61,54 @@ def test_intervals_have_at_least_three_reps():
 def test_unknown_session_kind_raises():
     with pytest.raises(ValueError):
         session_segments("swimming", 1.0)
+
+# simulated activities
+
+START = pd.Timestamp("2026-08-20 07:00")
+
+def test_one_row_per_second():
+    samples = simulate_session(START, [(3, 0.5)], hr_rest = 65, hr_max = 195)
+    assert len(samples) == 3
+    assert list(samples.columns) == ["timestamp", "heart_rate", "speed", "distance"]
+
+
+def test_heart_rate_follows_segments():
+    samples = simulate_session(START, [(2, 0.5), (2, 1.0)], hr_rest = 65, hr_max = 195)
+    assert samples["heart_rate"].tolist() == [130, 130, 195, 195]
+
+
+def test_distance_adds_up_speed():
+    samples = simulate_session(START, [(3, 0.5)], hr_rest = 65, hr_max = 195)
+    assert samples["distance"].tolist() == pytest.approx([2.4, 4.8, 7.2])
+
+
+def test_timestamps_one_second_apart():
+    samples = simulate_session(START, [(3, 0.5)], hr_rest = 65, hr_max = 195)
+    gaps = samples["timestamp"].diff().dropna()
+    assert (gaps == pd.Timedelta(seconds = 1)).all()
+
+
+def test_all_session_types_present():
+    kinds = {a.kind for a in generate_activities()}
+    assert kinds == {"easy", "intervals", "long"}
+
+
+def test_every_run_starts_at_seven():
+    for activity in generate_activities():
+        assert activity.start.hour == 7
+
+
+def test_no_runs_during_break():
+    for activity in generate_activities():
+        assert not date(2026, 10, 1) <= activity.start.date() <= date(2026, 10, 10)
+
+
+def test_overload_week_has_more_runs():
+    activities = generate_activities()
+    base = [a for a in activities if a.start.date() <= date(2026, 8, 26)]
+    overload = [
+        a for a in activities
+        if date(2026, 9, 24) <= a.start.date() <= date(2026, 9, 30)
+    ]
+    assert len(overload) > len(base)
+
