@@ -88,11 +88,9 @@ def simulate_session( start: pd.Timestamp, segments: list[tuple[int, float]], hr
 
 
 
-def generate_activities(start_date: date = date(2026, 8, 20), days: int = 60, hr_rest: float = 65, hr_max: float = 195, seed: int = 42) -> list[SyntheticActivity]:
+def generate_activities(start_date: date = date(2026, 8, 20), days: int = 60, hr_rest: float = 65, hr_max: float = 195) -> list[SyntheticActivity]:
     """
     Generate synthetic activities for days.
-
-    The same seed always produces the same data, so tests and demos are reproducible.
     """
     activities = []
 
