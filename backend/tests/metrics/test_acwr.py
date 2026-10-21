@@ -1,6 +1,12 @@
 import pandas as pd
+import pytest
 
-from app.metrics.acwr import daily_load
+from app.metrics.acwr import daily_load, acwr_rolling
+
+def make_daily(loads, start="2026-09-01"):
+    """Daily load series starting at start, one value per day."""
+    index = pd.date_range(start, periods=len(loads), freq="D")
+    return pd.Series(loads,index=index, dtype=float)
 
 def test_daily_load_sums_activities_on_same_day(): 
     loads = pd.Series(
@@ -26,4 +32,17 @@ def test_daily_load_counts_rest_days_up_to_end():
 
 def test_daily_load_empty():
     assert daily_load(pd.Series(dtype=float)).empty
+
+def test_constant_load_gives_acwr_of_one():
+    result = acwr_rolling(make_daily([100] * 40))
+    assert result["acwr"].iloc[-1] == pytest.approx(1.0)
+
+
+def test_load_spike_raises_acwr():
+    result = acwr_rolling(make_daily([100] * 28 + [200] * 7))
+    assert result["acute"].iloc[-1] == pytest.approx(200)
+    assert result["chronic"].iloc[-1] == pytest.approx(125)
+    assert result["acwr"].iloc[-1] == pytest.approx(1.6)
+
+
 

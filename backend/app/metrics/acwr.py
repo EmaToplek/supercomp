@@ -25,3 +25,19 @@ def daily_load(activity_loads: pd.Series, end: pd.Timestamp | None = None) -> pd
 
   daily = per_day.reindex(all_days, fill_value=0.0)
   return daily.astype(float)
+
+
+def acwr_rolling(daily: pd.Series) -> pd.DataFrame:
+  """
+  ACWR with simple rolling averages(7-day acute, 28-day chronic)
+  `daily` is the output of daily load: ine row per day, rest days as 0.
+  """ 
+
+  acute = daily.rolling(ACUTE_WORKLOAD, min_periods=1).mean()
+  chronic = daily.rolling(CHRONIC_WORKLOAD, min_periods=1).mean()
+
+  return pd.DataFrame({
+    "acute": acute,
+    "chronic": chronic, 
+    "acwr": acute / chronic
+  })
