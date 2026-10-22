@@ -1,6 +1,7 @@
 """Acute:chronic workload ratio (ACWR) from daily training load."""
 
 import pandas as pd 
+import numpy as np
 
 ACUTE_WORKLOAD = 7
 CHRONIC_WORKLOAD = 28
@@ -31,13 +32,22 @@ def acwr_rolling(daily: pd.Series) -> pd.DataFrame:
   """
   ACWR with simple rolling averages(7-day acute, 28-day chronic)
   `daily` is the output of daily load: ine row per day, rest days as 0.
+  For the first 27 days ACWR is NaN and status is "insufficient_data".
   """ 
 
   acute = daily.rolling(ACUTE_WORKLOAD, min_periods=1).mean()
   chronic = daily.rolling(CHRONIC_WORKLOAD, min_periods=1).mean()
 
+  day_number = np.arange(1, len(daily) + 1)
+  enough_data = day_number >= MIN_WORKLOAD
+
+  acwr = acute / chronic.replace(0, np.nan)
+  acwr = acwr.where(enough_data)
+
+
   return pd.DataFrame({
     "acute": acute,
     "chronic": chronic, 
-    "acwr": acute / chronic
+    "acwr": acwr,
+    "status": np.where(enough_data, "ok", "insufficient_data")
   })

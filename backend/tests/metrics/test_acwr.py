@@ -44,5 +44,20 @@ def test_load_spike_raises_acwr():
     assert result["chronic"].iloc[-1] == pytest.approx(125)
     assert result["acwr"].iloc[-1] == pytest.approx(1.6)
 
+def test_short_history_is_insufficient():
+    result = acwr_rolling(make_daily([100] * 40))
+    assert (result["status"].iloc[:27] == "insufficient_data").all()
+    assert result["acwr"].iloc[:27].isna().all()
+
+
+def test_status_is_ok_from_day_28():
+    result = acwr_rolling(make_daily([100] * 40))
+    assert result["status"].iloc[27] == "ok"
+    assert result["acwr"].iloc[27] == pytest.approx(1.0)
+
+
+def test_zero_chronic_load_gives_no_ratio():
+    result = acwr_rolling(make_daily([0] * 30))
+    assert result["acwr"].isna().all()
 
 
