@@ -10,6 +10,7 @@ async-lru==2.4.0
 attrs==26.1.0
 babel==2.18.0
 beautifulsoup4==4.15.0
+black==26.10.1
 bleach==6.4.0
 certifi==2026.7.22
 cffi==2.1.1
@@ -24,6 +25,7 @@ executing==2.3.0
 fastapi==0.143.3
 fastjsonschema==2.22.2
 fitdecode==0.11.0
+fitparse==1.2.0
 fonttools==4.67.0
 fqdn==1.6.0
 h11==0.16.0
@@ -62,6 +64,7 @@ MarkupSafe==3.0.4
 matplotlib==3.11.2
 matplotlib-inline==0.2.2
 mistune==3.3.4
+mypy_extensions==1.1.0
 nbclient==0.11.0
 nbconvert==7.17.2
 nbformat==5.11.1
@@ -74,6 +77,7 @@ packaging==26.3
 pandas==3.0.6
 pandocfilters==1.5.1
 parso==0.8.7
+pathspec==1.1.1
 pexpect==4.9.0
 pillow==13.0.0
 platformdirs==4.13.3
@@ -94,6 +98,8 @@ pytest==9.1.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.4
 python-json-logger==4.2.0
+python-multipart==0.0.32
+pytokens==0.4.1
 PyYAML==6.0.3
 pyzmq==27.2.0
 referencing==0.37.0
