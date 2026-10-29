@@ -82,3 +82,9 @@ def test_empty_data_gives_zero():
     empty = pd.DataFrame({"timestamp": pd.to_datetime([]), "heart_rate": []})
     assert banister_trimp(empty, HR_REST, HR_MAX, "female") == 0.0
     assert edwards_trimp(empty, HR_REST, HR_MAX) == 0.0
+
+def test_edwards_missing_hr_adds_nothing():
+    samples = make_samples([135] * 121)
+    samples["heart_rate"] = samples["heart_rate"].astype(float)
+    samples.loc[0:59, "heart_rate"] = np.nan 
+    assert edwards_trimp(samples, HR_REST, HR_MAX) == pytest.approx(3.0)
