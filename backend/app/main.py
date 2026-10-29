@@ -1,6 +1,9 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from app import init_db, SessionLocal
+
+from app import models
+from app.database import init_db
+from app.routes import settings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -8,15 +11,8 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="Supercomp API", lifespan=lifespan)
-
-# Dependency to get the database session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+app.include_router(settings.router)
 
 @app.get("/")
 def root():
-    return {"message": "API is running and database is connected!"}
+    return {"message": "API is running"}
