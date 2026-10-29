@@ -18,3 +18,12 @@ Base = declarative_base()
 def init_db():
     """Create all tables in the database."""
     Base.metadata.create_all(bind=engine)
+
+def get_db():
+    """Yield a database session and close it after the request."""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
