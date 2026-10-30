@@ -1,3 +1,5 @@
+"""Activity endpoints: upload a FIT file, calculate its metrics and store it with its raw samples"""
+
 import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
