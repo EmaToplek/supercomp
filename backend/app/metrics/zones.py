@@ -25,6 +25,7 @@ def hrr_fraction(hr: pd.Series, hr_rest: float, hr_max: float) -> pd.Series:
         raise ValueError("hr_max must be greater than hr_rest")
     return (hr - hr_rest) / (hr_max - hr_rest)
 
+
 def zone_for_fraction(fraction: float) -> int | None:
     """Return the zone (0–5) for a single HRR fraction, or None if HR is missing."""
     if pd.isna(fraction):
@@ -42,6 +43,7 @@ def zone_for_fraction(fraction: float) -> int | None:
     else:
         return 5
 
+
 def assign_zones(hr: pd.Series, hr_rest: float, hr_max: float) -> pd.Series:
     """Return the zone (0–5) for every sample. Missing HR stays <NA>."""
     fraction = hrr_fraction(hr, hr_rest, hr_max)
@@ -49,7 +51,10 @@ def assign_zones(hr: pd.Series, hr_rest: float, hr_max: float) -> pd.Series:
     zones = [zone_for_fraction(f) for f in fraction]
     return pd.Series(zones, index=hr.index, dtype="Int64")
 
-def time_in_zones( samples: pd.DataFrame, hr_rest: float, hr_max: float) -> dict[int, float]:
+
+def time_in_zones(
+    samples: pd.DataFrame, hr_rest: float, hr_max: float
+) -> dict[int, float]:
     """
     Seconds spent in each zone Z1–Z5.
 

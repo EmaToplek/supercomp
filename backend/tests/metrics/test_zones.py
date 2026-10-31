@@ -11,8 +11,9 @@ HR_MAX = 160
 def make_samples(heart_rates, seconds_apart=1):
     """Build a samples DataFrame with evenly spaced timestamps."""
     start = pd.Timestamp("2026-10-18 08:00:00")
-    timestamps = [start + pd.Timedelta(seconds=i * seconds_apart)
-                  for i in range(len(heart_rates))]
+    timestamps = [
+        start + pd.Timedelta(seconds=i * seconds_apart) for i in range(len(heart_rates))
+    ]
     return pd.DataFrame({"timestamp": timestamps, "heart_rate": heart_rates})
 
 

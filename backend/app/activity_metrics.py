@@ -9,7 +9,9 @@ from app.models import Activity, AthleteSettings
 NUMERIC_COLUMNS = ["heart_rate", "speed", "distance"]
 
 
-def calculate_metrics(activity: Activity, records: pd.DataFrame, settings: AthleteSettings) -> None:
+def calculate_metrics(
+    activity: Activity, records: pd.DataFrame, settings: AthleteSettings
+) -> None:
     """Fill in zone times and both TRIMP values from the samples and athlete settings."""
 
     hr_rest, hr_max = settings.resting_hr, settings.max_hr
@@ -35,10 +37,11 @@ def samples_to_records(samples: list) -> pd.DataFrame:
             "distance": [s.distance for s in samples],
         }
     )
- 
+
     records["timestamp"] = pd.to_datetime(records["timestamp"], utc=True)
     records[NUMERIC_COLUMNS] = records[NUMERIC_COLUMNS].astype(float)
     return records.sort_values("timestamp").reset_index(drop=True)
+
 
 def recalculate_all(db, settings: AthleteSettings) -> int:
     """Recalculate metrics for every stored activity. Returns how many were updated."""

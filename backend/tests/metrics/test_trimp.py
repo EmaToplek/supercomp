@@ -13,8 +13,9 @@ HR_MAX = 160
 def make_samples(heart_rates, seconds_apart=1):
     """Build a samples DataFrame with evenly spaced timestamps."""
     start = pd.Timestamp("2026-10-18 08:00:00")
-    timestamps = [start + pd.Timedelta(seconds=i * seconds_apart)
-                  for i in range(len(heart_rates))]
+    timestamps = [
+        start + pd.Timedelta(seconds=i * seconds_apart) for i in range(len(heart_rates))
+    ]
     return pd.DataFrame({"timestamp": timestamps, "heart_rate": heart_rates})
 
 
@@ -78,13 +79,15 @@ def test_edwards_matches_hand_calculation():
     samples = make_samples([115] * 60 + [135] * 121)
     assert edwards_trimp(samples, HR_REST, HR_MAX) == pytest.approx(7.0)
 
+
 def test_empty_data_gives_zero():
     empty = pd.DataFrame({"timestamp": pd.to_datetime([]), "heart_rate": []})
     assert banister_trimp(empty, HR_REST, HR_MAX, "female") == 0.0
     assert edwards_trimp(empty, HR_REST, HR_MAX) == 0.0
 
+
 def test_edwards_missing_hr_adds_nothing():
     samples = make_samples([135] * 121)
     samples["heart_rate"] = samples["heart_rate"].astype(float)
-    samples.loc[0:59, "heart_rate"] = np.nan 
+    samples.loc[0:59, "heart_rate"] = np.nan
     assert edwards_trimp(samples, HR_REST, HR_MAX) == pytest.approx(3.0)

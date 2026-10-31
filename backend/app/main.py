@@ -5,14 +5,17 @@ from app import models
 from app.database import init_db
 from app.routes import settings, activities
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
     yield
 
+
 app = FastAPI(title="Supercomp API", lifespan=lifespan)
 app.include_router(settings.router)
 app.include_router(activities.router)
+
 
 @app.get("/")
 def root():
