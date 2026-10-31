@@ -66,3 +66,9 @@ def upload_activity(file: UploadFile, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(activity)
     return activity
+
+
+@router.get("", response_model=list[ActivityOut])
+def list_activities(db: Session = Depends(get_db)):
+    return db.query(Activity).order_by(Activity.start_time.desc()).all()
+

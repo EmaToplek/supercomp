@@ -126,3 +126,19 @@ def test_changing_settings_recalculates_metrics(client, test_session, fake_read_
             banister_trimp(records, 50, 190, "male")
         )
         assert activity.trimp_edwards == pytest.approx(edwards_trimp(records, 50, 190))
+
+
+def test_list_is_empty_without_activities(client):
+    response = client.get("/activities")
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_list_shows_newest_first(client, fake_read_fit):
+    for day in (17, 19, 18):
+        start = datetime(2026, 10, day, 8, 0, tzinfo=timezone.utc)
+        fake_read_fit(make_records([140] * 61), ActivitySummary(start_time=start))
+        upload(client)
+
+    days = [a["start_time"][:10] for a in client.get("/activities").json()]
+    assert days == ["2026-10-19", "2026-10-18", "2026-10-17"]
