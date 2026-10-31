@@ -5,8 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.metrics.trimp import banister_trimp, edwards_trimp
-from app.metrics.zones import time_in_zones
+from app.activity_metrics import calculate_metrics
 from app.models import Activity, ActivitySample
 from app.parser.fit import FitParseError, read_fit
 from app.routes.settings import get_or_create_settings
@@ -35,28 +34,21 @@ def upload_activity(file: UploadFile, db: Session = Depends(get_db)):
 
     records, summary = parsed.records, parsed.summary
     settings = get_or_create_settings(db)
-    hr_rest, hr_max = settings.resting_hr, settings.max_hr
 
     # Fall back to the records if the session message is missing a value
     timestamps = records["timestamp"]
     start_time = summary.start_time or timestamps.iloc[0]
     duration_s = summary.duration_s or (timestamps.iloc[-1] - timestamps.iloc[0]).total_seconds()
 
-    zones = time_in_zones(records, hr_rest, hr_max)
-
     activity = Activity(
         start_time=start_time,
         duration_s=duration_s,
         avg_hr=summary.avg_hr,
-        max_hr=summary.max_hr,
-        trimp_banister=banister_trimp(records, hr_rest, hr_max, settings.sex),
-        trimp_edwards=edwards_trimp(records, hr_rest, hr_max),
-        zone1_time=zones.get(1, 0.0),
-        zone2_time=zones.get(2, 0.0),
-        zone3_time=zones.get(3, 0.0),
-        zone4_time=zones.get(4, 0.0),
-        zone5_time=zones.get(5, 0.0)
+        max_hr=summary.max_hr
     )
+
+    calculate_metrics(activity, records, settings)
+
     activity.samples = [
         ActivitySample(timestamp=row["timestamp"], heart_rate=row["heart_rate"], speed=row["speed"], distance=row["distance"])
         for row in samples_for_db(records)

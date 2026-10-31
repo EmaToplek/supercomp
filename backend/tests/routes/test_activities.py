@@ -45,7 +45,10 @@ def upload(client, filename="run.fit", content=b"fake"):
 
 def test_upload_returns_created_activity(client, fake_read_fit):
     records = make_records([150] * 121)
-    fake_read_fit(records, ActivitySummary(start_time=START, duration_s=120, avg_hr=150, max_hr=150))
+    fake_read_fit(
+        records,
+        ActivitySummary(start_time=START, duration_s=120, avg_hr=150, max_hr=150),
+    )
 
     response = upload(client)
 
@@ -53,7 +56,9 @@ def test_upload_returns_created_activity(client, fake_read_fit):
     body = response.json()
     assert body["duration_s"] == 120
     assert body["avg_hr"] == 150
-    assert body["trimp_edwards"] == pytest.approx(edwards_trimp(records, 65, 195))  # Default settings: resting 65, max 195, female
+    assert body["trimp_edwards"] == pytest.approx(
+        edwards_trimp(records, 65, 195)
+    )  # Default settings: resting 65, max 195, female
 
 
 def test_metrics_use_saved_settings(client, fake_read_fit):
@@ -63,7 +68,9 @@ def test_metrics_use_saved_settings(client, fake_read_fit):
 
     body = upload(client).json()
 
-    assert body["trimp_banister"] == pytest.approx(banister_trimp(records, 50, 190, "male"))
+    assert body["trimp_banister"] == pytest.approx(
+        banister_trimp(records, 50, 190, "male")
+    )
 
 
 def test_missing_summary_falls_back_to_records(client, fake_read_fit):
@@ -105,3 +112,16 @@ def test_invalid_fit_content_is_rejected_and_nothing_saved(client, test_session)
     with test_session() as db:
         assert db.query(Activity).count() == 0
 
+def test_changing_settings_recalculates_metrics(client, test_session, fake_read_fit):
+    records = make_records([150, None, 155] + [160] * 118)
+    fake_read_fit(records)
+    activity_id = upload(client).json()["id"]
+
+    client.put("/settings", json={"sex": "male", "resting_hr": 50, "max_hr": 190})
+
+    with test_session() as db:
+        activity = db.get(Activity, activity_id)
+        assert activity.trimp_banister == pytest.approx(
+            banister_trimp(records, 50, 190, "male")
+        )
+        assert activity.trimp_edwards == pytest.approx(edwards_trimp(records, 50, 190))
