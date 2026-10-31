@@ -23,6 +23,19 @@ def samples_for_db(records: pd.DataFrame) -> list[dict]:
     return cols.astype(object).where(cols.notna(), None).to_dict("records")
 
 
+def make_samples(records: pd.DataFrame) -> list[ActivitySample]:
+    """Build sample rows for the db from a records DataFrame."""
+    return [
+        ActivitySample(
+            timestamp=row["timestamp"],
+            heart_rate=row["heart_rate"],
+            speed=row["speed"],
+            distance=row["distance"],
+        )
+        for row in samples_for_db(records)
+    ]
+
+
 @router.post("/upload", response_model=ActivityOut, status_code=status.HTTP_201_CREATED)
 def upload_activity(file: UploadFile, db: Session = Depends(get_db)):
     if not file.filename or not file.filename.lower().endswith(".fit"):
@@ -52,15 +65,7 @@ def upload_activity(file: UploadFile, db: Session = Depends(get_db)):
 
     calculate_metrics(activity, records, settings)
 
-    activity.samples = [
-        ActivitySample(
-            timestamp=row["timestamp"],
-            heart_rate=row["heart_rate"],
-            speed=row["speed"],
-            distance=row["distance"],
-        )
-        for row in samples_for_db(records)
-    ]
+    activity.samples = make_samples(records)
 
     db.add(activity)
     db.commit()
@@ -74,7 +79,7 @@ def list_activities(db: Session = Depends(get_db)):
 
 
 @router.get("/{activity_id}", response_model=ActivityDetail)
-def get_activitiy(activity_id: int, db: Session = Depends(get_db)):
+def get_activity(activity_id: int, db: Session = Depends(get_db)):
     activity = db.get(Activity, activity_id)
     if activity is None:
         raise HTTPException(status_code=404, detail="Activity not found")
