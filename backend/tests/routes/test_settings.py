@@ -1,5 +1,6 @@
 """Tests for the athlete settings endpoints (GET and PUT /settings)"""
 
+
 def test_get_returns_defaults(client):
     response = client.get("/settings")
     assert response.status_code == 200

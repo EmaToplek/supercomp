@@ -12,7 +12,7 @@ from datetime import datetime
 class SettingsSchema(BaseModel):
     """Athlete settings used for HR zones and TRIMP."""
 
-    model_config = ConfigDict(from_attributes=True) 
+    model_config = ConfigDict(from_attributes=True)
 
     sex: Literal["female", "male"]
     resting_hr: int = Field(ge=30, le=120)
@@ -24,7 +24,8 @@ class SettingsSchema(BaseModel):
             raise ValueError("resting_hr must be lower than max_hr")
         return self
 
-class ActivityOut(BaseModel): 
+
+class ActivityOut(BaseModel):
     """Activity summary returned by API."""
 
     model_config = ConfigDict(from_attributes=True)
@@ -36,8 +37,8 @@ class ActivityOut(BaseModel):
     max_hr: int | None
     trimp_banister: float | None
     trimp_edwards: float | None
-    zone1_time: float 
-    zone2_time: float 
-    zone3_time: float 
-    zone4_time: float 
-    zone5_time: float 
+    zone1_time: float
+    zone2_time: float
+    zone3_time: float
+    zone4_time: float
+    zone5_time: float

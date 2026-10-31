@@ -112,6 +112,7 @@ def test_invalid_fit_content_is_rejected_and_nothing_saved(client, test_session)
     with test_session() as db:
         assert db.query(Activity).count() == 0
 
+
 def test_changing_settings_recalculates_metrics(client, test_session, fake_read_fit):
     records = make_records([150, None, 155] + [160] * 118)
     fake_read_fit(records)

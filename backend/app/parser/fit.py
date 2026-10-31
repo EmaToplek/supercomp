@@ -106,8 +106,9 @@ def _parse_record(frame: fitdecode.FitDataMessage) -> dict:
         "timestamp": frame.get_value("timestamp", fallback=None),
         "heart_rate": frame.get_value("heart_rate", fallback=None),
         # Newer devices store speed as 'enhanced_speed'
-        "speed": frame.get_value("enhanced_speed",
-                                 fallback=frame.get_value("speed", fallback=None)),
+        "speed": frame.get_value(
+            "enhanced_speed", fallback=frame.get_value("speed", fallback=None)
+        ),
         "distance": frame.get_value("distance", fallback=None),
     }
 

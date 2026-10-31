@@ -19,7 +19,9 @@ BANISTER_COEFFICIENTS: dict[str, tuple[float, float]] = {
 }
 
 
-def banister_trimp( samples: pd.DataFrame, hr_rest: float, hr_max: float, sex: Sex) -> float:
+def banister_trimp(
+    samples: pd.DataFrame, hr_rest: float, hr_max: float, sex: Sex
+) -> float:
     """
     Banister TRIMP, summed sample by sample.
 

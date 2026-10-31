@@ -15,9 +15,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
+
 def init_db():
     """Create all tables in the database."""
     Base.metadata.create_all(bind=engine)
+
 
 def get_db():
     """Yield a database session and close it after the request."""
@@ -26,4 +28,3 @@ def get_db():
         yield db
     finally:
         db.close()
-
