@@ -42,3 +42,20 @@ class ActivityOut(BaseModel):
     zone3_time: float
     zone4_time: float
     zone5_time: float
+
+class SampleOut(BaseModel):
+    """One raw sample, used for the heart rate curve."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    timestamp: datetime
+    heart_rate: float | None
+    speed: float | None
+    distance: float | None
+
+
+class ActivityDetail(ActivityOut):
+    """Activity summary together with its raw samples."""
+
+    samples: list[SampleOut]
+

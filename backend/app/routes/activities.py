@@ -1,4 +1,4 @@
-"""Activity endpoints: upload a FIT file, calculate its metrics and store it with its raw samples"""
+"""Activity endpoints: upload a FIT file, list activities and show one with its raw samples."""
 
 import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
@@ -9,7 +9,7 @@ from app.activity_metrics import calculate_metrics
 from app.models import Activity, ActivitySample
 from app.parser.fit import FitParseError, read_fit
 from app.routes.settings import get_or_create_settings
-from app.schemas import ActivityOut
+from app.schemas import ActivityOut, ActivityDetail
 
 router = APIRouter(prefix="/activities", tags=["activities"])
 
@@ -72,3 +72,10 @@ def upload_activity(file: UploadFile, db: Session = Depends(get_db)):
 def list_activities(db: Session = Depends(get_db)):
     return db.query(Activity).order_by(Activity.start_time.desc()).all()
 
+
+@router.get("/{activity_id}", response_model=ActivityDetail)
+def get_activitiy(activity_id: int, db: Session = Depends(get_db)):
+    activity = db.get(Activity, activity_id)
+    if activity is None:
+        raise HTTPException(status_code=404, detail="Activity not found")
+    return activity

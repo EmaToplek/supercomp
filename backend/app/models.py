@@ -34,7 +34,7 @@ class Activity(Base):
     zone5_time = Column(Float, default=0.0)
 
     samples = relationship(
-        "ActivitySample", back_populates="activity", cascade="all, delete-orphan"
+        "ActivitySample", back_populates="activity", cascade="all, delete-orphan", order_by="ActivitySample.timestamp"
     )
 
 

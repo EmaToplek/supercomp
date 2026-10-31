@@ -142,3 +142,15 @@ def test_list_shows_newest_first(client, fake_read_fit):
 
     days = [a["start_time"][:10] for a in client.get("/activities").json()]
     assert days == ["2026-10-19", "2026-10-18", "2026-10-17"]
+
+def test_detail_includes_samples_in_order(client, fake_read_fit):
+    fake_read_fit(make_records([120, None, 130]))
+    activity_id = upload(client).json()["id"]
+
+    body = client.get(f"/activities/{activity_id}").json()
+
+    assert [s["heart_rate"] for s in body["samples"]] == [120, None, 130]
+
+
+def test_unknown_activity_returns_404(client):
+    assert client.get("/activities/999").status_code == 404
