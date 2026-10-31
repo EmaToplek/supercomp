@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import AthleteSettings
 from app.schemas import SettingsSchema
+from app.activity_metrics import recalculate_all
 
 router = APIRouter(prefix="/settings", tags=["settings"])
 
@@ -39,6 +40,7 @@ def update_settings(new: SettingsSchema, db: Session = Depends(get_db)):
     settings.sex = new.sex
     settings.resting_hr = new.resting_hr
     settings.max_hr = new.max_hr
+    recalculate_all(db, settings)
     db.commit()
     db.refresh(settings)
     return settings

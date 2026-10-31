@@ -1,10 +1,12 @@
-"""Metric calculation for activities, shared between routes"""
+"""Metric calculation shared by the upload endpoint and settings recalculation."""
 
 import pandas as pd
 
 from app.metrics.trimp import banister_trimp, edwards_trimp
 from app.metrics.zones import time_in_zones
 from app.models import Activity, AthleteSettings
+
+NUMERIC_COLUMNS = ["heart_rate", "speed", "distance"]
 
 
 def calculate_metrics(activity: Activity, records: pd.DataFrame, settings: AthleteSettings) -> None:
@@ -22,3 +24,26 @@ def calculate_metrics(activity: Activity, records: pd.DataFrame, settings: Athle
     activity.zone5_time = zones.get(5, 0.0)
 
 
+def samples_to_records(samples: list) -> pd.DataFrame:
+    """Rebuild the records DataFrame from stored samples (NULL becomes NaN again)."""
+
+    records = pd.DataFrame(
+        {
+            "timestamp": [s.timestamp for s in samples],
+            "heart_rate": [s.heart_rate for s in samples],
+            "speed": [s.speed for s in samples],
+            "distance": [s.distance for s in samples],
+        }
+    )
+ 
+    records["timestamp"] = pd.to_datetime(records["timestamp"], utc=True)
+    records[NUMERIC_COLUMNS] = records[NUMERIC_COLUMNS].astype(float)
+    return records.sort_values("timestamp").reset_index(drop=True)
+
+def recalculate_all(db, settings: AthleteSettings) -> int:
+    """Recalculate metrics for every stored activity. Returns how many were updated."""
+    activities = db.query(Activity).all()
+    for activity in activities:
+        records = samples_to_records(activity.samples)
+        calculate_metrics(activity, records, settings)
+    return len(activities)
