@@ -92,7 +92,9 @@ def get_activity(activity_id: int, db: Session = Depends(get_db)):
 def seed_demo_data(days: int = Query(60, ge=28, le=365), db: Session = Depends(get_db)):
     """Fill an empty database with synthetic training, so the dashboard has data to show."""
     if db.query(Activity).first() is not None:
-        raise HTTPException(status_code=409, detail="Database already contains activities")
+        raise HTTPException(
+            status_code=409, detail="Database already contains activities"
+        )
 
     settings = get_or_create_settings(db)
     generated = generate_activities(
