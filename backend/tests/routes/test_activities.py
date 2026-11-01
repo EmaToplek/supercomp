@@ -154,3 +154,24 @@ def test_detail_includes_samples_in_order(client, fake_read_fit):
 
 def test_unknown_activity_returns_404(client):
     assert client.get("/activities/999").status_code == 404
+
+def test_seed_creates_activities_with_metrics(client, test_session):
+    response = client.post("/activities/seed", params={"days": 28})
+
+    assert response.status_code == 201
+    created = response.json()["created"]
+    assert created > 0
+    with test_session() as db:
+        activities = db.query(Activity).all()
+        assert len(activities) == created
+        assert all(a.trimp_banister > 0 for a in activities)
+        assert all(len(a.samples) > 0 for a in activities)
+
+
+def test_seed_is_refused_when_db_has_data(client):
+    client.post("/activities/seed", params={"days": 28})
+    assert client.post("/activities/seed", params={"days": 28}).status_code == 409
+
+
+def test_seed_needs_at_least_28_days(client):
+    assert client.post("/activities/seed", params={"days": 10}).status_code == 422

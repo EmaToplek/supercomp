@@ -69,3 +69,8 @@ class LoadPoint(BaseModel):
     chronic: float
     acwr: float | None
     status: Literal["ok", "insufficient_data"]
+
+class SeedResult(BaseModel):
+    """How many synthetic activities were created."""
+
+    created: int
