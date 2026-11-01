@@ -6,8 +6,7 @@ They validate incoming JSON and control which fields are sent back, separately f
 
 from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
-from datetime import datetime
-
+from datetime import datetime, date
 
 class SettingsSchema(BaseModel):
     """Athlete settings used for HR zones and TRIMP."""
@@ -42,3 +41,36 @@ class ActivityOut(BaseModel):
     zone3_time: float
     zone4_time: float
     zone5_time: float
+
+
+class SampleOut(BaseModel):
+    """One raw sample, used for the heart rate curve."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    timestamp: datetime
+    heart_rate: float | None
+    speed: float | None
+    distance: float | None
+
+
+class ActivityDetail(ActivityOut):
+    """Activity summary together with its raw samples."""
+
+    samples: list[SampleOut]
+
+
+class LoadPoint(BaseModel):
+    """Training load and ACWR for one day."""
+
+    day: date
+    load: float
+    acute: float
+    chronic: float
+    acwr: float | None
+    status: Literal["ok", "insufficient_data"]
+
+class SeedResult(BaseModel):
+    """How many synthetic activities were created."""
+
+    created: int

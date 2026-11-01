@@ -126,3 +126,52 @@ def test_changing_settings_recalculates_metrics(client, test_session, fake_read_
             banister_trimp(records, 50, 190, "male")
         )
         assert activity.trimp_edwards == pytest.approx(edwards_trimp(records, 50, 190))
+
+
+def test_list_is_empty_without_activities(client):
+    response = client.get("/activities")
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_list_shows_newest_first(client, fake_read_fit):
+    for day in (17, 19, 18):
+        start = datetime(2026, 10, day, 8, 0, tzinfo=timezone.utc)
+        fake_read_fit(make_records([140] * 61), ActivitySummary(start_time=start))
+        upload(client)
+
+    days = [a["start_time"][:10] for a in client.get("/activities").json()]
+    assert days == ["2026-10-19", "2026-10-18", "2026-10-17"]
+
+def test_detail_includes_samples_in_order(client, fake_read_fit):
+    fake_read_fit(make_records([120, None, 130]))
+    activity_id = upload(client).json()["id"]
+
+    body = client.get(f"/activities/{activity_id}").json()
+
+    assert [s["heart_rate"] for s in body["samples"]] == [120, None, 130]
+
+
+def test_unknown_activity_returns_404(client):
+    assert client.get("/activities/999").status_code == 404
+
+def test_seed_creates_activities_with_metrics(client, test_session):
+    response = client.post("/activities/seed", params={"days": 28})
+
+    assert response.status_code == 201
+    created = response.json()["created"]
+    assert created > 0
+    with test_session() as db:
+        activities = db.query(Activity).all()
+        assert len(activities) == created
+        assert all(a.trimp_banister > 0 for a in activities)
+        assert all(len(a.samples) > 0 for a in activities)
+
+
+def test_seed_is_refused_when_db_has_data(client):
+    client.post("/activities/seed", params={"days": 28})
+    assert client.post("/activities/seed", params={"days": 28}).status_code == 409
+
+
+def test_seed_needs_at_least_28_days(client):
+    assert client.post("/activities/seed", params={"days": 10}).status_code == 422
