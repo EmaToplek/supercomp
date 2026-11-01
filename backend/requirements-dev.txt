@@ -1,0 +1,13 @@
+# Everything the app needs, plus tools for development
+-r requirements.txt
+
+# Testing
+pytest==9.1.1
+httpx==0.28.1
+
+# Formatting
+black==26.10.1
+
+# Notebooks
+jupyter==1.1.1
+matplotlib==3.11.2
