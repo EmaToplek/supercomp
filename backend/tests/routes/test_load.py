@@ -27,6 +27,7 @@ def add_activities(test_session, daily_loads):
 def test_no_activities_gives_empty_list(client):
     assert client.get("/load").json() == []
 
+
 @pytest.mark.parametrize("method", ["rolling", "ewma"])
 def test_constant_load_gives_acwr_of_one(client, test_session, method):
     add_activities(test_session, [100] * 30)
@@ -45,13 +46,21 @@ def test_rest_days_are_filled_up_to_end(client, test_session):
 
     points = client.get("/load", params={"end": "2026-09-04"}).json()
 
-    assert [p["day"] for p in points] == ["2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04"]
+    assert [p["day"] for p in points] == [
+        "2026-09-01",
+        "2026-09-02",
+        "2026-09-03",
+        "2026-09-04",
+    ]
     assert [p["load"] for p in points] == [50, 0, 0, 0]
+
 
 def test_edwards_trimp_can_be_chosen(client, test_session):
     add_activities(test_session, [50])
 
-    point = client.get("/load", params={"trimp": "edwards", "end": "2026-09-01"}).json()[0]
+    point = client.get(
+        "/load", params={"trimp": "edwards", "end": "2026-09-01"}
+    ).json()[0]
 
     assert point["load"] == 100
 

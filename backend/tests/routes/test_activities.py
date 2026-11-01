@@ -143,6 +143,7 @@ def test_list_shows_newest_first(client, fake_read_fit):
     days = [a["start_time"][:10] for a in client.get("/activities").json()]
     assert days == ["2026-10-19", "2026-10-18", "2026-10-17"]
 
+
 def test_detail_includes_samples_in_order(client, fake_read_fit):
     fake_read_fit(make_records([120, None, 130]))
     activity_id = upload(client).json()["id"]
@@ -154,6 +155,7 @@ def test_detail_includes_samples_in_order(client, fake_read_fit):
 
 def test_unknown_activity_returns_404(client):
     assert client.get("/activities/999").status_code == 404
+
 
 def test_seed_creates_activities_with_metrics(client, test_session):
     response = client.post("/activities/seed", params={"days": 28})

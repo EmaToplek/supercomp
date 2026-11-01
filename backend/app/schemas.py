@@ -8,6 +8,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from datetime import datetime, date
 
+
 class SettingsSchema(BaseModel):
     """Athlete settings used for HR zones and TRIMP."""
 
@@ -69,6 +70,7 @@ class LoadPoint(BaseModel):
     chronic: float
     acwr: float | None
     status: Literal["ok", "insufficient_data"]
+
 
 class SeedResult(BaseModel):
     """How many synthetic activities were created."""

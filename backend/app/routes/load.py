@@ -30,7 +30,9 @@ def get_load(
         return []
 
     starts, loads = zip(*rows)
-    activity_loads = pd.Series(loads, index=pd.to_datetime(starts, utc=True), dtype=float)
+    activity_loads = pd.Series(
+        loads, index=pd.to_datetime(starts, utc=True), dtype=float
+    )
     activity_loads = activity_loads.fillna(0.0)
 
     # Fill rest days up to today, so ACWR also shows what a break does
