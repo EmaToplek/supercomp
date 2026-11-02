@@ -12,6 +12,7 @@ from app.database import get_db
 from app.models import AthleteSettings
 from app.schemas import SettingsSchema
 from app.activity_metrics import recalculate_all
+from app.dependencies import block_in_demo_mode
 
 router = APIRouter(prefix="/settings", tags=["settings"])
 
@@ -34,7 +35,9 @@ def read_settings(db: Session = Depends(get_db)):
     return get_or_create_settings(db)
 
 
-@router.put("", response_model=SettingsSchema)
+@router.put(
+    "", response_model=SettingsSchema, dependencies=[Depends(block_in_demo_mode)]
+)
 def update_settings(new: SettingsSchema, db: Session = Depends(get_db)):
     settings = get_or_create_settings(db)
     settings.sex = new.sex
