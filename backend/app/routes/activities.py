@@ -12,6 +12,7 @@ from app.parser.fit import FitParseError, read_fit
 from app.routes.settings import get_or_create_settings
 from app.schemas import ActivityOut, ActivityDetail, SeedResult
 from app.generators.synthetic import generate_activities
+from app.dependencies import block_in_demo_mode
 
 router = APIRouter(prefix="/activities", tags=["activities"])
 
@@ -38,7 +39,12 @@ def make_samples(records: pd.DataFrame) -> list[ActivitySample]:
     ]
 
 
-@router.post("/upload", response_model=ActivityOut, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/upload",
+    response_model=ActivityOut,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(block_in_demo_mode)],
+)
 def upload_activity(file: UploadFile, db: Session = Depends(get_db)):
     if not file.filename or not file.filename.lower().endswith(".fit"):
         raise HTTPException(status_code=400, detail="Only .fit files are supported")
@@ -88,7 +94,11 @@ def get_activity(activity_id: int, db: Session = Depends(get_db)):
     return activity
 
 
-@router.post("/seed", response_model=SeedResult, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/seed",
+    response_model=SeedResult,
+    status_code=status.HTTP_201_CREATED,
+)
 def seed_demo_data(days: int = Query(60, ge=28, le=365), db: Session = Depends(get_db)):
     """Fill an empty database with synthetic training, so the dashboard has data to show."""
     if db.query(Activity).first() is not None:
