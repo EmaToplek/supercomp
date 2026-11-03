@@ -8,6 +8,7 @@ from sqlalchemy.pool import StaticPool
 
 from app.database import Base, get_db
 from app.main import app
+from app.auth import require_api_key
 
 
 @pytest.fixture
@@ -32,5 +33,16 @@ def client(test_session):
             db.close()
 
     app.dependency_overrides[get_db] = override_get_db
+
+    # Route tests check route logic, auth has its own tests
+    app.dependency_overrides[require_api_key] = lambda: None
     yield TestClient(app)
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def auth_client(client, monkeypatch):
+    """Same client, but with the real API key check."""
+    monkeypatch.setenv("API_KEY", "test-key")
+    app.dependency_overrides.pop(require_api_key)
+    return client
