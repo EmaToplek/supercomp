@@ -4,6 +4,7 @@ from datetime import date, timedelta
 import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, status, Query
 from sqlalchemy.orm import Session
+from app.auth import require_api_key
 
 from app.database import get_db
 from app.activity_metrics import calculate_metrics
@@ -12,7 +13,6 @@ from app.parser.fit import FitParseError, read_fit
 from app.routes.settings import get_or_create_settings
 from app.schemas import ActivityOut, ActivityDetail, SeedResult
 from app.generators.synthetic import generate_activities
-from app.dependencies import block_in_demo_mode
 
 router = APIRouter(prefix="/activities", tags=["activities"])
 
@@ -43,7 +43,7 @@ def make_samples(records: pd.DataFrame) -> list[ActivitySample]:
     "/upload",
     response_model=ActivityOut,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(block_in_demo_mode)],
+    dependencies=[Depends(require_api_key)],
 )
 def upload_activity(file: UploadFile, db: Session = Depends(get_db)):
     if not file.filename or not file.filename.lower().endswith(".fit"):
@@ -98,6 +98,7 @@ def get_activity(activity_id: int, db: Session = Depends(get_db)):
     "/seed",
     response_model=SeedResult,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(require_api_key)],
 )
 def seed_demo_data(days: int = Query(60, ge=28, le=365), db: Session = Depends(get_db)):
     """Fill an empty database with synthetic training, so the dashboard has data to show."""
