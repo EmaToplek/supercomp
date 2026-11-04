@@ -4,7 +4,10 @@ Supercomp analyzes training load from Garmin `.FIT` files. It calculates the loa
 
 The name comes from *supercompensation*: you get fitter when load and recovery are in balance.
 
-> **Status:** the backend API is done and tested. The React dashboard and a live demo are next.
+> **Status:** the backend API is done, tested and deployed. The React dashboard is next.
+
+**Live API:** https://supercomp.onrender.com/docs
+*(free hosting, the first request may take up to a minute to wake the server)*
 
 ## Why I built it
 
@@ -30,17 +33,17 @@ Rest days count as zero load. ACWR is only reported once 28 days of history exis
 
 ## API
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/settings` | resting HR, max HR and sex |
-| `PUT` | `/settings` | update settings and recalculate the metrics of all workouts |
-| `POST` | `/activities/upload` | upload a `.FIT` file |
-| `GET` | `/activities` | list of workouts, newest first |
-| `GET` | `/activities/{id}` | one workout with its heart rate samples |
-| `GET` | `/load` | daily load and ACWR (`trimp=banister\|edwards`, `method=ewma\|rolling`, `end=YYYY-MM-DD`) |
-| `POST` | `/activities/seed` | fill an empty database with 60 days of synthetic training for a demo |
+| Method | Endpoint | Description | API key |
+| --- | --- | --- | --- |
+| `GET` | `/settings` | resting HR, max HR and sex | |
+| `PUT` | `/settings` | update settings and recalculate the metrics of all workouts | required |
+| `POST` | `/activities/upload` | upload a `.FIT` file | required |
+| `GET` | `/activities` | list of workouts, newest first | |
+| `GET` | `/activities/{id}` | one workout with its heart rate samples | |
+| `GET` | `/load` | daily load and ACWR (`trimp=banister\|edwards`, `method=ewma\|rolling`, `end=YYYY-MM-DD`) | |
+| `POST` | `/activities/seed` | fill an empty database with 60 days of synthetic training for a demo | required |
 
-Interactive docs are available at `/docs` when the server is running.
+Endpoints that change data need an API key in the `X-API-Key` header. On the live demo all `GET` endpoints are open to visitors, so the stored data can be explored but not changed. To run locally, set `API_KEY` in `.env`.
 
 ## Tech stack
 
@@ -48,6 +51,7 @@ Interactive docs are available at `/docs` when the server is running.
 - **Data:** pandas, NumPy, fitdecode
 - **Testing:** pytest, FastAPI TestClient, in-memory SQLite
 - **Tooling:** Docker Compose, Black, Jupyter for data exploration
+- **Hosting:** Render (API), Neon (PostgreSQL)
 - **Planned:** React, TypeScript, Vite, Recharts, GitHub Actions
 
 ## Project structure
@@ -111,11 +115,13 @@ The metric functions are checked against hand-calculated examples and edge cases
 - ACWR is a population-level indicator and is debated in the literature; it's a guide, not a diagnosis.
 - Days are grouped in UTC.
 - Schema changes currently need a database reset; migrations (Alembic) would be the next step.
+- Changing athlete settings recalculates all past workouts with the new values. Settings history per date is planned (#43).
 
 ## Roadmap
 
+- [x] Deployed backend API
 - [ ] React dashboard with an ACWR chart and risk zones
-- [ ] Live demo
+- [ ] Live dashboard demo
 - [ ] CI with GitHub Actions
 - [ ] Session RPE for strength training
 - [ ] More realistic heart rate response in the synthetic data
