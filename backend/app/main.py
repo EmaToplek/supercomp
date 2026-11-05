@@ -1,10 +1,11 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
+import os
 from app import models
 from app.database import init_db
 from app.routes import settings, activities, load
-
+from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -13,6 +14,16 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Supercomp API", lifespan=lifespan)
+
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["GET"],
+    allow_headers=["*"],
+)
+
 app.include_router(settings.router)
 app.include_router(activities.router)
 app.include_router(load.router)
