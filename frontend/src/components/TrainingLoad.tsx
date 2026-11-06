@@ -1,6 +1,7 @@
 import type { LoadPoint } from '../api/trainingLoad'
 import { useApi } from '../hooks/useApi'
 import { AcwrChart } from './AcwrChart'
+import { LoadBars } from './LoadBars'
 
 /** Loads /load and shows the ACWR chart. */
 export function TrainingLoad() {
@@ -20,6 +21,10 @@ export function TrainingLoad() {
     <section>
       <h2>Acute:Chronic Workload Ratio</h2>
       <AcwrChart points={load.data} />
+
+      <h3>Daily load (TRIMP)</h3>
+      <LoadBars points={load.data} />
+
     </section>
   )
 }
