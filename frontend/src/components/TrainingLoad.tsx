@@ -3,6 +3,12 @@ import { useApi } from '../hooks/useApi'
 import { AcwrChart } from './AcwrChart'
 import { LoadBars } from './LoadBars'
 
+/** True if at least one day has an ACWR value (needs about 4 weeks of history). */
+function hasAcwrData(points: LoadPoint[]): boolean {
+  return points.some((point) => point.status === 'ok')
+} 
+
+
 /** Loads /load and shows the ACWR chart. */
 export function TrainingLoad() {
   const load = useApi<LoadPoint[]>('/load')
@@ -17,14 +23,23 @@ export function TrainingLoad() {
     )
   }
 
+  const points = load.data
+
+  if (points.length === 0) {
+    return <p>No activities yet. Upload a FIT file to see your training load.</p>
+  }
+
   return (
     <section>
       <h2>Acute:Chronic Workload Ratio</h2>
-      <AcwrChart points={load.data} />
+      {hasAcwrData(points) ? (
+        <AcwrChart points={points} />
+      ) : (
+        <p>Insufficient data: ACWR needs about 4 weeks of training history.</p>
+      )}
 
       <h3>Daily load (TRIMP)</h3>
-      <LoadBars points={load.data} />
-
+      <LoadBars points={points} />
     </section>
   )
 }
