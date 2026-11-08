@@ -26,7 +26,7 @@ export function ZoneBars({ activity }: Props) {
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis type="number" unit=" min" />
       <YAxis type="category" dataKey="zone" width="auto" />
-      <Tooltip formatter={(minutes: number) => `${Math.round(minutes)} min`} />
+      <Tooltip formatter={(value) => `${Math.round(Number(value))} min`} />
       <Bar dataKey="minutes" name="Time" fill="#64748b" />
     </BarChart>
   )
