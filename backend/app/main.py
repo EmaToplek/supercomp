@@ -4,7 +4,7 @@ from fastapi import FastAPI
 import os
 from app import models
 from app.database import init_db
-from app.routes import settings, activities, load
+from app.routes import settings, activities, load, owner
 from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
@@ -24,6 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(owner.router)
 app.include_router(settings.router)
 app.include_router(activities.router)
 app.include_router(load.router)
