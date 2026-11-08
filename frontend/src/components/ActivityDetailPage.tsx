@@ -3,6 +3,7 @@ import type { ActivityDetail } from '../api/activities'
 import { useApi } from '../hooks/useApi'
 import { formatDate, formatDuration, formatNumber } from '../utils/format'
 import { HeartRateChart } from './HeartRateChart'
+import { ZoneBars } from './ZoneBars'
 
 /** Detail page for one activity, opened from /activities/:id. */
 export function ActivityDetailPage() {
@@ -39,6 +40,9 @@ export function ActivityDetailPage() {
 
       <h3>Heart rate</h3>
       <HeartRateChart samples={data.samples} />
+
+      <h3>Time in zones</h3>
+      <ZoneBars activity={data} />
     </section>
   )
 }
