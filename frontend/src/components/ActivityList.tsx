@@ -1,6 +1,7 @@
 import type { Activity } from '../api/activities'
 import { useApi } from '../hooks/useApi'
 import { formatDate, formatDuration } from '../utils/format'
+import { Link } from 'react-router'
 
 /** Loads /activities and shows them as a table. */
 export function ActivityList() {
@@ -34,7 +35,9 @@ export function ActivityList() {
         <tbody>
           {activities.data.map((activity) => (
             <tr key={activity.id}>
-              <td>{formatDate(activity.start_time)}</td>
+              <td>
+                <Link to={`/activities/${activity.id}`}>{formatDate(activity.start_time)}</Link>
+              </td>
               <td>{formatDuration(activity.duration_s)}</td>
               <td>{Math.round(activity.trimp_banister)}</td>
             </tr>
