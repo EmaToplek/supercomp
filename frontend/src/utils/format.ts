@@ -22,3 +22,11 @@ export function formatNumber(value: number | null): string {
   if (value === null) return '–'
   return String(Math.round(value))
 }
+
+/** Formats minutes as mm:ss, e.g. 32.78 -> "32:47". */
+export function formatMinutes(minutes: number): string {
+  const totalSeconds = Math.round(minutes * 60)
+  const mm = Math.floor(totalSeconds / 60)
+  const ss = String(totalSeconds % 60).padStart(2, '0')
+  return `${mm}:${ss}`
+}

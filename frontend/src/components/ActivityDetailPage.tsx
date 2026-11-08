@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router'
 import type { ActivityDetail } from '../api/activities'
 import { useApi } from '../hooks/useApi'
 import { formatDate, formatDuration, formatNumber } from '../utils/format'
+import { HeartRateChart } from './HeartRateChart'
 
 /** Detail page for one activity, opened from /activities/:id. */
 export function ActivityDetailPage() {
@@ -35,6 +36,9 @@ export function ActivityDetailPage() {
         <dt>TRIMP</dt>
         <dd>{formatNumber(data.trimp_banister)}</dd>
       </dl>
+
+      <h3>Heart rate</h3>
+      <HeartRateChart samples={data.samples} />
     </section>
   )
 }
