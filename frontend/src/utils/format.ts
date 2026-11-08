@@ -16,3 +16,9 @@ export function formatDuration(seconds: number): string {
   if (hours === 0) return `${minutes} min`
   return `${hours} h ${minutes} min`
 }
+
+/** Rounds a number for display, or shows a dash when the value is missing. */
+export function formatNumber(value: number | null): string {
+  if (value === null) return '–'
+  return String(Math.round(value))
+}

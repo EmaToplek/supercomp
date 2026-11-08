@@ -13,3 +13,17 @@ export type Activity = {
   zone4_time: number
   zone5_time: number
 }
+
+
+/** One raw sample from the FIT file, used for the HR curve. Matches SampleOut. */
+export type Sample = {
+  timestamp: string
+  heart_rate: number | null
+  speed: number | null
+  distance: number | null
+}
+
+/** Activity with its raw samples, returned by GET /activities/{id}. Matches ActivityDetail. */
+export type ActivityDetail = Activity & {
+  samples: Sample[]
+}
