@@ -1,0 +1,13 @@
+.dropzone {
+  display: block;
+  padding: 3rem 1rem;
+  border: 2px dashed #888;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.dropzone.dragging {
+  border-color: #f5c400;
+  background: rgba(245, 196, 0, 0.1);
+}

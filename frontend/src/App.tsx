@@ -6,6 +6,7 @@ import { ActivityList } from './components/ActivityList'
 import { LoginPage } from './components/LoginPage'
 import { TrainingLoad } from './components/TrainingLoad'
 import { UploadPage } from './components/UploadPage'
+import './App.css' 
 
 function App() {
   const { apiKey, logout } = useAuth()
