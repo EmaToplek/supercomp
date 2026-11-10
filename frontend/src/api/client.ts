@@ -1,3 +1,5 @@
+import type { Activity } from './activities'
+
 const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 
 
@@ -46,4 +48,24 @@ export async function checkApiKey(apiKey: string): Promise<boolean> {
   if (res.status === 401) return false
   if (!res.ok) throw await toApiError(res)
   return true
+}
+
+/** Uploads one FIT file. Only works with the owner's API key. */
+export async function uploadActivity(file: File, apiKey: string): Promise<Activity> {
+  const form = new FormData()
+  form.append('file', file) 
+
+  let res: Response
+  try {
+    res = await fetch(`${BASE_URL}/activities/upload`, {
+      method: 'POST',
+      headers: { 'X-API-Key': apiKey },
+      body: form,
+    })
+  } catch {
+    throw new ApiError(0, 'Server not reachable')
+  }
+
+  if (!res.ok) throw await toApiError(res)
+  return res.json()
 }
