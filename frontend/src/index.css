@@ -1,0 +1,92 @@
+/* Colors and fonts used across the app */
+:root {
+  --paper: #f1f0ec;
+  --ink: #111111;
+  --grey: #5c5a55;
+  --faint: #cfcdc6;
+  --yellow: #ffd400;
+
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.55 var(--font-body);
+}
+
+a {
+  color: var(--ink);
+}
+
+h2 {
+  margin: 0 0 20px;
+  font: 700 30px/1 var(--font-display);
+  text-transform: uppercase;
+}
+
+h3 {
+  margin: 32px 0 12px;
+  font: 600 20px/1.2 var(--font-display);
+  text-transform: uppercase;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+}
+
+button:hover {
+  background: #333333;
+}
+
+input,
+select {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--ink);
+  background: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Highlighter stroke behind a few key words */
+mark {
+  background: linear-gradient(transparent 52%, var(--yellow) 52%, var(--yellow) 92%, transparent 92%);
+  color: inherit;
+  padding: 0 2px;
+}
+
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
+}
+
+main {
+  padding-top: 40px;
+}
+
+.muted {
+  color: var(--grey);
+}
