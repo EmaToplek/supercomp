@@ -90,3 +90,75 @@ main {
 .muted {
   color: var(--grey);
 }
+
+/* Header */
+.header-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 28px 0 14px;
+  border-bottom: 3px solid var(--ink);
+}
+
+.logo {
+  margin: 0;
+  font: 700 56px/0.85 var(--font-display);
+  text-transform: uppercase;
+}
+
+.logo span {
+  background: var(--yellow);
+  padding: 0 6px;
+}
+
+.header-subtitle {
+  margin: 0;
+  font: 500 13px var(--font-mono);
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ink);
+  font: 500 13px var(--font-mono);
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 10px;
+  text-decoration: none;
+}
+
+/* NavLink adds the "active" class on the current route */
+.nav a.active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.link-button {
+  min-height: 36px;
+  padding: 0 10px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+.link-button:hover {
+  background: none;
+  color: var(--grey);
+}
