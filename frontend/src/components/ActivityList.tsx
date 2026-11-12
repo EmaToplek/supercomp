@@ -1,6 +1,6 @@
 import type { Activity } from '../api/activities'
 import { useApi } from '../hooks/useApi'
-import { formatDate, formatDuration } from '../utils/format'
+import { formatDate, formatDuration, formatNumber} from '../utils/format'
 import { Link } from 'react-router'
 
 /** Loads /activities and shows them as a table. */
@@ -18,32 +18,36 @@ export function ActivityList() {
   }
 
   if (activities.data.length === 0) {
-    return <p>No activities yet.</p>
+    return <p className='muted'>No activities yet.</p>
   }
 
   return (
     <section>
-      <h2>Activities</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Duration</th>
-            <th>TRIMP</th>
-          </tr>
-        </thead>
-        <tbody>
-          {activities.data.map((activity) => (
-            <tr key={activity.id}>
-              <td>
-                <Link to={`/activities/${activity.id}`}>{formatDate(activity.start_time)}</Link>
-              </td>
-              <td>{formatDuration(activity.duration_s)}</td>
-              <td>{Math.round(activity.trimp_banister)}</td>
+      <h2>Sessions</h2>
+      <div className="table-wrap">
+        <table className="log">
+          <thead>
+            <tr>
+              <th>date</th>
+              <th className="num">time</th>
+              <th className="num">avg hr</th>
+              <th className="num">trimp</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {activities.data.map((activity) => (
+              <tr key={activity.id}>
+                <td>
+                  <Link to={`/activities/${activity.id}`}>{formatDate(activity.start_time)}</Link>
+                </td>
+                <td className="num">{formatDuration(activity.duration_s)}</td>
+                <td className="num">{formatNumber(activity.avg_hr)}</td>
+                <td className="num">{formatNumber(activity.trimp_banister)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </section>
   )
 }

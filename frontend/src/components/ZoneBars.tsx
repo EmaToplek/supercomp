@@ -1,5 +1,6 @@
 import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts'
 import type { Activity } from '../api/activities'
+import { axisTick, colors, tooltipStyle } from '../chartTheme'
 
 /** Minutes spent in each HR zone, from the zone*_time fields (seconds). */
 function toZoneMinutes(activity: Activity) {
@@ -23,11 +24,29 @@ export function ZoneBars({ activity }: Props) {
       data={toZoneMinutes(activity)}
       layout="vertical"
     >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis type="number" unit=" min" />
-      <YAxis type="category" dataKey="zone" width="auto" />
-      <Tooltip formatter={(value) => `${Math.round(Number(value))} min`} />
-      <Bar dataKey="minutes" name="Time" fill="#64748b" />
+      <CartesianGrid horizontal={false} stroke={colors.faint} strokeDasharray="2 4" />
+      <XAxis
+        type="number"
+        unit=" min"
+        tick={axisTick}
+        tickLine={false}
+        axisLine={{ stroke: colors.ink }}
+      />
+      <YAxis
+        type="category"
+        dataKey="zone"
+        width="auto"
+        tick={axisTick}
+        tickLine={false}
+        axisLine={{ stroke: colors.ink }}
+      />
+      <Tooltip
+        {...tooltipStyle}
+        separator=": "
+        cursor={{ fill: colors.ink, fillOpacity: 0.06 }}
+        formatter={(value) => `${Math.round(Number(value))} min`}
+      />
+      <Bar dataKey="minutes" name="Time" fill={colors.bar} activeBar={{ fill: colors.yellow }} />
     </BarChart>
   )
 }

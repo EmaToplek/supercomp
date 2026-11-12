@@ -259,3 +259,60 @@ main {
     border-top: 1px solid var(--ink);
   }
 }
+
+/* Sessions table */
+.table-wrap {
+  overflow-x: auto;
+}
+
+.log {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+}
+
+.log th {
+  padding: 0 12px 10px 0;
+  border-bottom: 2px solid var(--ink);
+  font: 500 12px var(--font-mono);
+  color: var(--grey);
+  text-align: left;
+}
+
+.log td {
+  padding: 13px 12px 13px 0;
+  border-bottom: 1px solid var(--faint);
+}
+
+.log td a {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.log td a:hover {
+  text-decoration: underline;
+}
+
+/* Numbers aligned right, all digits the same width */
+.log .num {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Activity detail */
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  font: 500 13px var(--font-mono);
+  color: var(--grey);
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: var(--ink);
+}
+
+.stats + h3 {
+  margin-top: 40px;
+}
