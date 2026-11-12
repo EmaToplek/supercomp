@@ -6,26 +6,28 @@ import { ActivityList } from './components/ActivityList'
 import { LoginPage } from './components/LoginPage'
 import { TrainingLoad } from './components/TrainingLoad'
 import { UploadPage } from './components/UploadPage'
-import './App.css' 
 
 function App() {
   const { apiKey, logout } = useAuth()
 
   return (
-    <>
-      <header>
-        <h1>Supercomp</h1>
-        <nav>
-          <NavLink to="/" end>Training load</NavLink>
-          {' | '}
-          <NavLink to="/activities">Activities</NavLink>
-          {' | '}
+    <div className="page">
+      <header className="site-header">
+        <div className="header-top">
+          <h1 className="logo">
+            Super<span>comp</span>
+          </h1>
+          <p className="header-subtitle">Training log · Ema T.</p>
+        </div>
+
+        <nav className="nav" aria-label="Main">
+          <div className="nav-links">
+            <NavLink to="/" end>Load</NavLink>
+            <NavLink to="/activities">Sessions</NavLink>
+            {apiKey && <NavLink to="/upload">Upload</NavLink>}
+          </div>
           {apiKey ? (
-            <>
-              <NavLink to="/upload">Upload</NavLink>
-              {' | '}
-              <button onClick={logout}>Log out</button>
-            </>
+            <button className="link-button" onClick={logout}>Log out</button>
           ) : (
             <NavLink to="/login">Owner login</NavLink>
           )}
@@ -48,7 +50,7 @@ function App() {
           />
         </Routes>
       </main>
-    </>
+    </div>
   )
 }
 

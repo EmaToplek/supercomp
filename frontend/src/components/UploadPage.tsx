@@ -4,6 +4,7 @@ import { ApiError, uploadActivity } from '../api/client'
 import { useAuth } from '../auth/useAuth'
 import { Link } from 'react-router'
 import { formatDate, formatDuration, formatNumber } from '../utils/format'
+import { ZoneBars } from './ZoneBars'
 
 type UploadState =
   | { status: 'idle' }
@@ -13,39 +14,31 @@ type UploadState =
 
 /** Short summary of what the backend calculated for the uploaded activity. */
 function UploadResult({ activity }: { activity: Activity }) {
-  const zones = [
-    activity.zone1_time,
-    activity.zone2_time,
-    activity.zone3_time,
-    activity.zone4_time,
-    activity.zone5_time,
-  ]
-
   return (
-    <div>
-      <h3>Upload successful</h3>
-      <dl>
-        <dt>Date</dt>
-        <dd>{formatDate(activity.start_time)}</dd>
-        <dt>Duration</dt>
-        <dd>{formatDuration(activity.duration_s)}</dd>
-        <dt>Avg HR</dt>
-        <dd>{formatNumber(activity.avg_hr)}</dd>
-        <dt>TRIMP (Banister)</dt>
-        <dd>{formatNumber(activity.trimp_banister)}</dd>
-        <dt>TRIMP (Edwards)</dt>
-        <dd>{formatNumber(activity.trimp_edwards)}</dd>
+    <div className='upload-result'>
+      <h3>Upload · {formatDate(activity.start_time)}</h3>
+
+      <dl className='stats'>
+        <div>
+          <dt>Duration</dt>
+          <dd>{formatDuration(activity.duration_s)}</dd>
+        </div>
+        <div>
+          <dt>Avg HR</dt>
+          <dd>{formatNumber(activity.avg_hr)}</dd>
+        </div>
+        <div>
+          <dt>TRIMP (Banister)</dt>
+          <dd>{formatNumber(activity.trimp_banister)}</dd>
+        </div>
+        <div>
+          <dt>TRIMP (Edwards)</dt>
+          <dd>{formatNumber(activity.trimp_edwards)}</dd>
+        </div>
       </dl>
-
-      <ul>
-        {zones.map((seconds, i) => (
-          <li key={i}>
-            Zone {i + 1}: {formatDuration(seconds)}
-          </li>
-        ))}
-      </ul>
-
-      <Link to={`/activities/${activity.id}`}>Show details</Link>
+      
+      <ZoneBars activity={activity} />
+      <Link to={`/activities/${activity.id}`}>Show details →</Link>
     </div>
   )
 }
@@ -105,13 +98,16 @@ export function UploadPage() {
         onDragLeave={() => setDragging(false)}
         onDrop={handleDrop}
       >
-        <input type="file" accept=".fit" onChange={handlePick} hidden />
-        {state.status === 'uploading'
-          ? `Uploading ${state.fileName}…`
-          : 'Drop a .fit file here or click to choose one'}
+        <input type="file" accept=".fit" onChange={handlePick} className="visually-hidden" />
+        <span className="dropzone-title">
+          {state.status === 'uploading'
+            ? `Uploading ${state.fileName}…`
+            : 'Drop a .fit file here or click to choose one'}
+        </span>
+        <span className="dropzone-hint">Garmin export · one activity per file</span>
       </label>
 
-      {state.status === 'error' && <p role="alert">{state.message}</p>}
+      {state.status === 'error' && <p role="alert" className="alert">{state.message}</p>}
       {state.status === 'done' && <UploadResult activity={state.activity} />}
     </section>
   )

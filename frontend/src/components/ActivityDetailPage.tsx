@@ -24,18 +24,26 @@ export function ActivityDetailPage() {
 
   return (
     <section>
-      <Link to="/activities">← Back to activities</Link>
+      <Link to="/activities">← All Sessions</Link>
       <h2>{formatDate(data.start_time)}</h2>
 
-      <dl>
-        <dt>Duration</dt>
-        <dd>{formatDuration(data.duration_s)}</dd>
-        <dt>Average HR</dt>
-        <dd>{formatNumber(data.avg_hr)} bpm</dd>
-        <dt>Max HR</dt>
-        <dd>{formatNumber(data.max_hr)} bpm</dd>
-        <dt>TRIMP</dt>
-        <dd>{formatNumber(data.trimp_banister)}</dd>
+      <dl className='stats'>
+        <div>
+          <dt>Duration</dt>
+          <dd>{formatDuration(data.duration_s)}</dd>
+        </div>
+        <div>
+          <dt>Average HR</dt>
+          <dd>{formatNumber(data.avg_hr)} bpm</dd>
+        </div>
+        <div>
+          <dt>Max HR</dt>
+          <dd>{formatNumber(data.max_hr)} bpm</dd>
+        </div>
+        <div>
+          <dt>TRIMP</dt>
+          <dd>{formatNumber(data.trimp_banister)}</dd>
+        </div>
       </dl>
 
       <h3>Heart rate</h3>

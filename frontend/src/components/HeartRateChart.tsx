@@ -1,6 +1,7 @@
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 import type { Sample } from '../api/activities'
 import { formatMinutes } from '../utils/format'
+import { axisTick, colors, tooltipStyle } from '../chartTheme'
 
 type ChartPoint = { minute: number; heartRate: number | null }
 
@@ -26,24 +27,39 @@ export function HeartRateChart({ samples }: Props) {
 
   return (
     <LineChart responsive style={{ width: '100%', height: 300 }} data={points}>
-      <CartesianGrid strokeDasharray="3 3" />
+      <CartesianGrid vertical={false} stroke={colors.faint} strokeDasharray="2 4" />
       <XAxis
         dataKey="minute"
         type="number"
         domain={['dataMin', 'dataMax']}
         tickFormatter={(minute: number) => `${Math.round(minute)} min`}
+        tick={axisTick}
+        tickLine={false}
+        axisLine={{ stroke: colors.ink }}
       />
-      <YAxis width="auto" domain={['dataMin - 10', 'dataMax + 10']} unit=" bpm" />
-      <Tooltip 
+      <YAxis
+        width="auto"
+        domain={['dataMin - 10', 'dataMax + 10']}
+        unit=" bpm"
+        tick={axisTick}
+        tickLine={false}
+        axisLine={{ stroke: colors.ink }}
+      />
+      <Tooltip
+        {...tooltipStyle}
+        separator=": "
+        cursor={{ stroke: colors.ink }}
         labelFormatter={(minute) => formatMinutes(Number(minute))}
-        formatter={(value) => `${value} bpm`}
+        formatter={(value) => `${Math.round(Number(value))} bpm`}
       />
       <Line
         type="monotone"
         dataKey="heartRate"
         name="Heart rate"
-        stroke="#ef4444"
+        stroke={colors.ink}
+        strokeWidth={1.5}
         dot={false}
+        activeDot={{ r: 5, fill: colors.yellow, stroke: colors.ink, strokeWidth: 2 }}
         isAnimationActive={false}
       />
     </LineChart>

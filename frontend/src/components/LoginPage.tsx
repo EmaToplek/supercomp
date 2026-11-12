@@ -31,27 +31,28 @@ export function LoginPage() {
   }
 
   return (
-    <section>
+    <section className="narrow">
       <h2>Owner login</h2>
-      <p>Uploading activities is only available to the owner of this demo.</p>
+      <p className="muted">Uploading activities is only available to the owner of this demo.</p>
 
-      <form onSubmit={handleSubmit}>
-        <label>
-          API key{' '}
-          <input
+      <form className="form" onSubmit={handleSubmit}>
+        <div className="field">
+        <label htmlFor="api-key">API Key</label>
+        <input
+            id="api-key"
             type="password"
             value={key}
             onChange={(event) => setKey(event.target.value)}
             autoComplete="current-password"
             required
           />
-        </label>{' '}
+        </div>
         <button type="submit" disabled={checking}>
           {checking ? 'Checking…' : 'Log in'}
         </button>
       </form>
 
-      {error && <p role="alert">{error}</p>}
+      {error && <p role="alert" className="alert">{error}</p>}
     </section>
   )
 }
