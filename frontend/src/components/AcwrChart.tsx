@@ -11,11 +11,11 @@ const DANGER_MIN = 1.5
 const Y_AXIS_MIN_TOP= 2
 
 /** Highest ACWR in the data. Days without a value are skipped. */
-function highestAcwr(points: LoadPoint[]): number {
+function highestAcwr(days: LoadPoint[]): number {
   let highest = 0
-  for (const point of points) {
-    if (point.acwr !== null && point.acwr > highest) {
-      highest = point.acwr
+  for (const day of days) {
+    if (day.acwr !== null && day.acwr > highest) {
+      highest = day.acwr
     }
   }
   return highest
@@ -35,18 +35,18 @@ function halfSteps(max: number): number[] {
   return ticks
 }
 
-type Props = { points: LoadPoint[] }
+type Props = { days: LoadPoint[] }
 
 /** ACWR over time as a line chart. */
-export function AcwrChart({ points }: Props) {
+export function AcwrChart({ days }: Props) {
 
-  const yMax = Math.max(Y_AXIS_MIN_TOP, roundUpToHalf(highestAcwr(points)))
+  const yMax = Math.max(Y_AXIS_MIN_TOP, roundUpToHalf(highestAcwr(days)))
 
   return (
     <LineChart
       responsive
       style={{ width: '100%', height: 300 }}
-      data={points}
+      data={days}
       syncId="training-load"
     >
       <CartesianGrid vertical={false} stroke={colors.faint} strokeDasharray="2 4" />
@@ -81,7 +81,7 @@ export function AcwrChart({ points }: Props) {
         strokeDasharray="4 4"
         label={{ value: 'spike 1.5', position: 'insideTopLeft', ...axisTick }}
       />
-      
+
       <Tooltip
         {...tooltipStyle}
         cursor={{ stroke: colors.ink }}

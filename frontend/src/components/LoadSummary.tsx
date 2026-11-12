@@ -9,13 +9,13 @@ function acwrLabel(acwr: number): string {
 }
 
 /** Summary above the charts: since when data exists, today's ACWR and load. */
-export function LoadSummary({ points }: { points: LoadPoint[] }) {
-  const latest = points[points.length - 1]
-  const trainingDays = points.filter((point) => point.load > 0).length
-  const restDays = points.length - trainingDays
+export function LoadSummary({ days }: { days: LoadPoint[] }) {
+  const latest = days[days.length - 1]
+  const trainingDays = days.filter((point) => point.load > 0).length
+  const restDays = days.length - trainingDays
 
   // "day" is a plain date string, read it as UTC so it never shifts a day
-  const since = new Date(points[0].day).toLocaleDateString('en-GB', {
+  const since = new Date(days[0].day).toLocaleDateString('en-GB', {
     day: 'numeric',
     month: 'long',
     timeZone: 'UTC',
@@ -25,7 +25,7 @@ export function LoadSummary({ points }: { points: LoadPoint[] }) {
     <div className="summary">
       <div className="lead">
         <p>
-          Training logged since <mark>{since}</mark>: {points.length} days, {trainingDays} of them
+          Training logged since <mark>{since}</mark>: {days.length} days, {trainingDays} of them
           with training.
         </p>
         {latest.acwr === null && (

@@ -2,15 +2,15 @@ import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts'
 import type { LoadPoint } from '../api/trainingLoad'
 import { axisTick, colors, formatDay, formatValue, tooltipStyle } from '../chartTheme'
 
-type Props = { points: LoadPoint[] }
+type Props = { days: LoadPoint[] }
 
 /** Daily training load (TRIMP) as bars, synced with the ACWR chart. */
-export function LoadBars({ points }: Props) {
+export function LoadBars({ days }: Props) {
   return (
     <BarChart
       responsive
       style={{ width: '100%', height: 150 }}
-      data={points}
+      data={days}
       syncId="training-load"
     >
       <XAxis
