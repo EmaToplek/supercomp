@@ -234,7 +234,7 @@ main {
 }
 
 @media (max-width: 720px) {
-  .brand {
+  .logo {
     font-size: 44px;
   }
 
@@ -315,4 +315,95 @@ main {
 
 .stats + h3 {
   margin-top: 40px;
+}
+
+/* Forms */
+.narrow {
+  max-width: 480px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font: 500 13px var(--font-mono);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.alert {
+  margin: 16px 0 0;
+  padding: 10px 14px;
+  border-left: 3px solid var(--ink);
+  background: #ffffff;
+}
+
+/* Hidden on screen, but still reachable with the keyboard and screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Upload */
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 56px 24px;
+  border: 1.5px dashed var(--ink);
+  text-align: center;
+  cursor: pointer;
+}
+
+.dropzone:hover,
+.dropzone.dragging {
+  background: var(--yellow);
+  border-style: solid;
+}
+
+/* The input is invisible, so the outline goes on the whole drop zone */
+.dropzone:focus-within {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.dropzone-title {
+  font-weight: 600;
+}
+
+.dropzone-hint {
+  font: 400 12px var(--font-mono);
+  color: var(--grey);
+}
+
+.upload-result {
+  margin-top: 32px;
+}
+
+.upload-result .stats {
+  margin-bottom: 24px;
+}
+
+.upload-result a {
+  display: inline-block;
+  margin-top: 16px;
+  font: 500 13px var(--font-mono);
 }
