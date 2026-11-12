@@ -1,5 +1,6 @@
 import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts'
 import type { LoadPoint } from '../api/trainingLoad'
+import { axisTick, colors, formatDay, formatValue, tooltipStyle } from '../chartTheme'
 
 type Props = { points: LoadPoint[] }
 
@@ -12,10 +13,22 @@ export function LoadBars({ points }: Props) {
       data={points}
       syncId="training-load"
     >
-      <XAxis dataKey="day" tickFormatter={(day: string) => day.slice(5)} />
-      <YAxis width="auto" />
-      <Tooltip />
-      <Bar dataKey="load" name="TRIMP" fill="#64748b" />
+      <XAxis
+          dataKey="day"
+          tickFormatter={formatDay}
+          tick={axisTick}
+          tickLine={false}
+          axisLine={{ stroke: colors.ink }}
+          minTickGap={24}
+      />
+      <YAxis width="auto" tick={axisTick} tickLine={false} axisLine={{ stroke: colors.ink }} />
+      <Tooltip
+        {...tooltipStyle}
+        cursor={{ fill: colors.ink, fillOpacity: 0.06 }}
+        labelFormatter={(day) => formatDay(String(day))}
+        formatter={formatValue}
+      />
+      <Bar dataKey="load" name="TRIMP" fill={colors.bar} activeBar={{ fill: colors.yellow }} />
     </BarChart>
   )
 }
