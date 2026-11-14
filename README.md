@@ -1,5 +1,7 @@
 # Supercomp
 
+![CI](https://github.com/EmaToplek/supercomp/actions/workflows/ci.yml/badge.svg)
+
 Supercomp analyzes training load from Garmin `.FIT` files. It calculates the load of each workout from heart rate and uses the history of all workouts to show whether recent training is rising faster than the body is used to.
 
 The name comes from *supercompensation*: you get fitter when load and recovery are in balance.
@@ -7,7 +9,9 @@ The name comes from *supercompensation*: you get fitter when load and recovery a
 > **Status:** backend and dashboard are live. Automatic Garmin sync is in progress.
 
 **Live demo:** https://supercomp-nine.vercel.app
+
 **API docs:** https://supercomp.onrender.com/docs
+
 *(free hosting, the first request may take up to a minute to wake the server)*
 
 <p align="center">
@@ -69,9 +73,8 @@ In the dashboard, the owner logs in with the same key to upload files; visitors 
 - **Data:** pandas, NumPy, fitdecode
 - **Frontend:** React 19, TypeScript, Vite, React Router, Recharts
 - **Testing:** pytest, FastAPI TestClient, in-memory SQLite
-- **Tooling:** Docker Compose, Black, Jupyter for data exploration
+- **Tooling:** Docker Compose, Black, Jupyter for data exploration, GitHub Actions
 - **Hosting:** Render (API), Neon (PostgreSQL), Vercel (frontend)
-- **Planned:** GitHub Actions
 
 ## Project structure
 
@@ -166,7 +169,7 @@ The metric functions are checked against hand-calculated examples and edge cases
 - [x] React dashboard with an ACWR chart and risk zones
 - [x] Live dashboard demo
 - [ ] Automatic sync from Garmin Connect via the official Personal API, in progress
-- [ ] CI with GitHub Actions
+- [x] CI with GitHub Actions
 - [ ] Session RPE for strength training
 - [ ] More realistic heart rate response in the synthetic data
 - [ ] Multi-user authentication
