@@ -31,7 +31,7 @@ def fake_read_fit(monkeypatch):
 
     def use(records, summary=None):
         parsed = ParsedActivity(records=records, summary=summary or ActivitySummary())
-        monkeypatch.setattr("app.routes.activities.read_fit", lambda source: parsed)
+        monkeypatch.setattr("app.activity_import.read_fit", lambda source: parsed)
 
     return use
 

@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey
 from .database import Base
 from sqlalchemy.orm import relationship
+from sqlalchemy import BigInteger
 
 
 class AthleteSettings(Base):
@@ -18,6 +19,7 @@ class Activity(Base):
     __tablename__ = "activities"
 
     id = Column(Integer, primary_key=True)
+    garmin_activity_id = Column (BigInteger, unique=True, nullable=True)
     start_time = Column(DateTime(timezone=True), nullable=False)
     duration_s = Column(Float, nullable=False)
     avg_hr = Column(Integer, nullable=True)

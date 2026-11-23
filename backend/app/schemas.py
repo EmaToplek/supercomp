@@ -76,3 +76,11 @@ class SeedResult(BaseModel):
     """How many synthetic activities were created."""
 
     created: int
+
+class SyncOut(BaseModel): 
+    model_config = ConfigDict(from_attributes=True)
+
+    new_activities: int
+    matched_manual_uploads: int
+    already_synced: int
+    failed_garmin_ids: list[int]
