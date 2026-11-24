@@ -1,0 +1,34 @@
+name: Garmin sync
+
+on:
+  schedule:
+    # Every hour at :15 from 05 to 21 UTC (06–22 in Vienna in winter). No sync at night.
+    - cron: "15 5-21 * * *"
+  workflow_dispatch: 
+
+# Never run two syncs at the same time
+concurrency:
+  group: garmin-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Call POST /sync
+        env:
+          API_URL: ${{ vars.SUPERCOMP_API_URL }}
+          API_KEY: ${{ secrets.SUPERCOMP_API_KEY }}
+        run: |
+            # Render free plan sleeps, so the first request can take up to a minute.
+            # Retrying is safe: sync skips activities that are already stored.
+            response=$(curl --silent --show-error --fail-with-body \
+              --max-time 120 --retry 3 --retry-delay 30 --retry-all-errors \
+              -X POST "$API_URL/sync" \
+              -H "X-API-Key: $API_KEY")
+
+            echo "$response"
+            echo "### Garmin sync" >> "$GITHUB_STEP_SUMMARY"
+            echo "$response" | jq -r '"New: \(.new_activities), matched uploads: \(.matched_manual_uploads), already synced: \(.already_synced), failed: \(.failed_garmin_ids | length)"' \
+              >> "$GITHUB_STEP_SUMMARY"
